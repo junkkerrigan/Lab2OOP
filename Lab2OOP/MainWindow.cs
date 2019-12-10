@@ -18,7 +18,7 @@ namespace Lab2OOP
     // mod div
     // inc dec
     // power
-    // java -jar antlr-4.7.2-complete.jar -Dlanguage=CSharp.\Lab2Grammar.g4 -visitor 
+    // java -jar antlr-4.7.2-complete.jar -Dlanguage=CSharp.\Grammar.g4 -visitor 
 
     public static class Sys26
     {
@@ -61,7 +61,7 @@ namespace Lab2OOP
     public partial class Form1 : Form
     {
         public TableView Table { get; set; }
-        bool ChangesMade = true;
+        bool TableChanged = false;
         TextBox ExpressionInCell;
         Panel MenuPanel;
         Label Rows, Cols;
@@ -104,12 +104,12 @@ namespace Lab2OOP
                     }
                     else
                     {
-                        MessageBox.Show($"Wrong expression", "Error");
+                        MessageBox.Show($"Wrong expression: impossible to recognize formula", "Error");
                     }
                     Table.CurCell.Expression = oldExpr;
                     Table.Recalculate(Table.CurCell);
                 }
-                ChangesMade = false;
+                TableChanged = true;
             };
             AddTableButtons();
             AddFileButtons();
@@ -177,7 +177,7 @@ namespace Lab2OOP
                     changed.Expression = oldExpr;
                     Table.Recalculate(changed);
                 }
-                ChangesMade = false;
+                TableChanged = true;
             };
             Controls.Add(Table);
             Table.ResumeLayout();
@@ -215,7 +215,7 @@ namespace Lab2OOP
                 {
                     File.WriteAllText(saveTo.FileName, Table.ToFile());
                 }
-                ChangesMade = true;
+                TableChanged = false;
             };
             Open = new Button()
             {
@@ -226,7 +226,7 @@ namespace Lab2OOP
             };
             Open.Click += (s, e) =>
             {
-                if (ChangesMade)
+                if (TableChanged)
                 {
                     var isSave = MessageBox.Show("Save the table?", "Saving", MessageBoxButtons.YesNoCancel);
                     if (isSave == DialogResult.Yes)
@@ -252,7 +252,6 @@ namespace Lab2OOP
                     }
                 }
             };
-            Console.WriteLine(Open.Right - About.Left);
             MenuPanel.Controls.Add(About);
             MenuPanel.Controls.Add(Save);
             MenuPanel.Controls.Add(Open);
@@ -341,7 +340,6 @@ namespace Lab2OOP
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             };
-            Console.WriteLine(RemoveColumn.Right - Rows.Left);
             MenuPanel.Controls.Add(Rows);
             MenuPanel.Controls.Add(AddRow);
             MenuPanel.Controls.Add(RemoveRow);
@@ -371,7 +369,7 @@ namespace Lab2OOP
         }
         void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (ChangesMade) return;
+            if (!TableChanged) return;
             var isSave = MessageBox.Show("Save the table?", "Saving", MessageBoxButtons.YesNoCancel);
             if (isSave == DialogResult.Yes)
             {

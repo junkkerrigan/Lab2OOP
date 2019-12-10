@@ -51,13 +51,11 @@
   <ItemGroup>
     <Compile Include="Antlr.cs" />
     <Compile Include="CellView.cs" />
+    <Compile Include="GrammarBaseVisitor.cs" />
+    <Compile Include="GrammarLexer.cs" />
+    <Compile Include="GrammarParser.cs" />
+    <Compile Include="GrammarVisitor.cs" />
     <Compile Include="InputFrom.cs" />
-    <Compile Include="Lab2GrammarBaseListener.cs" />
-    <Compile Include="Lab2GrammarBaseVisitor.cs" />
-    <Compile Include="Lab2GrammarLexer.cs" />
-    <Compile Include="Lab2GrammarListener.cs" />
-    <Compile Include="Lab2GrammarParser.cs" />
-    <Compile Include="Lab2GrammarVisitor.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -71,6 +69,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="Grammar.g4" />
+    <None Include="Grammar.interp" />
+    <None Include="Grammar.tokens" />
+    <None Include="GrammarLexer.interp" />
+    <None Include="GrammarLexer.tokens" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -84,6 +87,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="antlr-4.7.2-complete.jar" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

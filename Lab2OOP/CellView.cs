@@ -37,13 +37,13 @@ namespace Lab2OOP
             try
             {
                 var inputStream = new AntlrInputStream(Expression);
-                var lexer = new Lab2GrammarLexer(inputStream);
+                var lexer = new GrammarLexer(inputStream);
                 var commonTokenStream = new CommonTokenStream(lexer);
-                var parser = new Lab2GrammarParser(commonTokenStream);
+                var parser = new GrammarParser(commonTokenStream);
                 parser.RemoveErrorListeners();
-                parser.AddErrorListener(new MyParsErrListener());
-                var expr = parser.unit();
-                int val = (new AntlrVisitor(this)).Visit(expr);
+                parser.AddErrorListener(new ParsingErrorListener());
+                var expr = parser.rule();
+                int val = (new ParsingVisitor(this)).Visit(expr);
                 Recalculated = true;
                 return val;
             }

@@ -5,18 +5,11 @@ using Antlr4.Runtime.Misc;
 
 namespace Lab2OOP
 {
-    public class AntlrVisitor : Lab2GrammarBaseVisitor<int>
+    public class ParsingVisitor : GrammarBaseVisitor<int>
     {
         CellView CalculatingCell;
-        int LeftOperand(Lab2GrammarParser.ExprContext context)
-        {
-            return Visit(context.GetRuleContext<Lab2GrammarParser.ExprContext>(0));
-        }
-        int RightOperand(Lab2GrammarParser.ExprContext context)
-        {
-            return Visit(context.GetRuleContext<Lab2GrammarParser.ExprContext>(1));
-        }
-        public AntlrVisitor(CellView calculating) : base()
+
+        public ParsingVisitor(CellView calculating) : base()
         {
             CalculatingCell = calculating;
             Console.WriteLine($"CalculatingCell: {calculating}");
@@ -31,12 +24,13 @@ namespace Lab2OOP
                 Console.WriteLine(d);
             }
         }
-        public override int VisitUnit(Lab2GrammarParser.UnitContext context)
+        
+        public override int VisitRule(GrammarParser.RuleContext context)
         {
             try
             {
                 Console.WriteLine(context.GetText());
-                int ans = Visit(context.expr());
+                int ans = Visit(context.expression());
                 Console.WriteLine($"{ans}");
                 return ans;
             }
@@ -45,97 +39,110 @@ namespace Lab2OOP
                 throw;
             }
         }
-        public override int VisitNum([NotNull] Lab2GrammarParser.NumContext context)
+        public override int VisitNumber([NotNull] GrammarParser.NumberContext context)
         {
             int ans = int.Parse(context.GetText());
             Console.WriteLine($"num {ans}");
             return ans;
         }
-        public override int VisitAdditionOrSubtraction(Lab2GrammarParser.AdditionOrSubtractionContext context)
+        public override int VisitAdditionSubtraction(GrammarParser.AdditionSubtractionContext context)
         {
-            int l = LeftOperand(context), r = RightOperand(context);
+            int l = Left(context), r = Right(context);
             int ans = 0;
-            if (context.operatorToken.Type == Lab2GrammarLexer.ADDITION)
-            {
-                ans = l + r;
-                Console.WriteLine($"plus {ans}");
-            }
-            else if (context.operatorToken.Type == Lab2GrammarLexer.SUBTRACTION)
+            
+            if (context.operation.Type == GrammarLexer.MINUS_SIGN)
             {
                 ans = l - r;
                 Console.WriteLine($"minus {ans}");
             }
+            else if (context.operation.Type == GrammarLexer.PLUS_SIGN)
+            {
+                ans = l + r;
+                Console.WriteLine($"plus {ans}");
+            }
             return ans;
         }
-        public override int VisitMultiplicationOrDivision(Lab2GrammarParser.MultiplicationOrDivisionContext context)
+        public override int VisitMultiplicationDivision(GrammarParser.MultiplicationDivisionContext context)
         {
-            int l = LeftOperand(context), r = RightOperand(context);
+            int l = Left(context), r = Right(context);
             int ans = 0;
-            if (context.operatorToken.Type == Lab2GrammarLexer.MULTIPLICATION)
-            {
-                ans = l * r;
-                Console.WriteLine($"mult {ans}");
-            }
-            else if (context.operatorToken.Type == Lab2GrammarLexer.DIV)
+            
+            if (context.operation.Type == GrammarLexer.DIVISION_SIGN)
             {
                 if (r == 0)
                 {
                     var ex = new Exception();
-                    ex.Data.Add("Type", "div on 0");
+                    ex.Data.Add("Type", "division on null");
                     throw ex;
                 }
-                ans = l / r;
+                else
+                {
+                    ans = l / r;
+                }
                 Console.WriteLine($"div {ans}");
+            }
+            else if (context.operation.Type == GrammarLexer.MULTIPLICATION_SIGN)
+            {
+                ans = l * r;
+                Console.WriteLine($"mult {ans}");
             }
             return ans;
         }
-        public override int VisitMod([NotNull] Lab2GrammarParser.ModContext context)
+        public override int VisitOnModulo([NotNull] GrammarParser.OnModuloContext context)
         {
-            var l = LeftOperand(context);
-            var r = RightOperand(context);
+            var l = Left(context);
+            var r = Right(context);
+            int ans = 0;
             if (r == 0)
             {
                 var ex = new DivideByZeroException();
-                ex.Data.Add("Type", "mod on 0");
+                ex.Data.Add("Type", "on modulo 0");
                 throw ex;
             }
-            int ans = l % r;
+            else
+            {
+                ans = l % r;
+            }
             Console.WriteLine($"mod {ans}");
             return ans;
         }
-        public override int VisitPower([NotNull] Lab2GrammarParser.PowerContext context)
+        public override int VisitInPower([NotNull] GrammarParser.InPowerContext context)
         {
-            var l = LeftOperand(context);
-            var r = RightOperand(context);
+            var l = Left(context);
+            var r = Right(context);
+            int ans = 0;
             if (r < 0)
             {
                 var ex = new ArgumentOutOfRangeException();
-                ex.Data.Add("Type", "negative value of power");
+                ex.Data.Add("Type", "expression in negative power");
                 throw ex;
             }
-            if (r == 0 && l == 0)
+            else if (r == 0 && l == 0)
             {
                 var ex = new ArgumentOutOfRangeException();
-                ex.Data.Add("Type", "null in null power");
+                ex.Data.Add("Type", "null expression in null power");
                 throw ex;
             }
-            int ans = (int)Math.Pow(l, r);
+            else
+            {
+                ans = (int)Math.Pow(l, r);
+            }
             Console.WriteLine($"pow {ans}");
             return ans;
         }
-        public override int VisitBrackets([NotNull] Lab2GrammarParser.BracketsContext context)
+        public override int VisitInBrackets([NotNull] GrammarParser.InBracketsContext context)
         {
-            int ans = Visit(context.expr());
+            int ans = Visit(context.expression());
             Console.WriteLine($"par {ans}");
             return ans;
         }
-        public override int VisitNegNum([NotNull] Lab2GrammarParser.NegNumContext context)
+        public override int VisitNegativeNumber([NotNull] GrammarParser.NegativeNumberContext context)
         {
             int ans = int.Parse(context.GetText());
             Console.WriteLine($"neg {ans}");
             return ans;
         }
-        public override int VisitCellRef([NotNull] Lab2GrammarParser.CellRefContext context)
+        public override int VisitCell([NotNull] GrammarParser.CellContext context)
         {
             try
             {
@@ -165,21 +172,18 @@ namespace Lab2OOP
                 throw;
             }
         }
-        public override int VisitInvalid([NotNull] Lab2GrammarParser.InvalidContext context)
+        public override int VisitWrong([NotNull] GrammarParser.WrongContext context)
         {
             throw new Exception();
         }
-        public override int VisitInc([NotNull] Lab2GrammarParser.IncContext context)
+ 
+        int Left(GrammarParser.ExpressionContext context)
         {
-            int ans = Visit(context.expr()) + 1;
-            Console.WriteLine($"inc {ans}");
-            return ans;
+            return Visit(context.GetRuleContext<GrammarParser.ExpressionContext>(0));
         }
-        public override int VisitDec([NotNull] Lab2GrammarParser.DecContext context)
+        int Right(GrammarParser.ExpressionContext context)
         {
-            int ans = Visit(context.expr()) - 1;
-            Console.WriteLine($"dic {ans}");
-            return ans;
+            return Visit(context.GetRuleContext<GrammarParser.ExpressionContext>(1));
         }
     }
 }

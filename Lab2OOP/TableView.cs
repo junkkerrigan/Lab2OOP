@@ -8,7 +8,7 @@ using Antlr4.Runtime;
 
 namespace Lab2OOP
 {
-    public class MyParsErrListener : IAntlrErrorListener<IToken>
+    public class ParsingErrorListener : IAntlrErrorListener<IToken>
     {
         public void SyntaxError(TextWriter output, IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
         {
@@ -167,13 +167,13 @@ namespace Lab2OOP
             try
             {
                 var inputStream = new AntlrInputStream(cell.Expression);
-                var lexer = new Lab2GrammarLexer(inputStream);
+                var lexer = new GrammarLexer(inputStream);
                 var commonTokenStream = new CommonTokenStream(lexer);
-                var parser = new Lab2GrammarParser(commonTokenStream);
+                var parser = new GrammarParser(commonTokenStream);
                 parser.RemoveErrorListeners();
-                parser.AddErrorListener(new MyParsErrListener());
-                var expr = parser.unit();
-                cell.Value = (new AntlrVisitor(cell)).Visit(expr);
+                parser.AddErrorListener(new ParsingErrorListener());
+                var expr = parser.rule();
+                cell.Value = (new ParsingVisitor(cell)).Visit(expr);
             }
             catch
             {
