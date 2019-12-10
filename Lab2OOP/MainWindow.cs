@@ -65,7 +65,7 @@ namespace Lab2OOP
         TextBox ExpressionInCell;
         Panel MenuPanel;
         Label Rows, Cols;
-        Button AddRow, About, AddColumn, RemoveRow, RemoveColumn, Save, Open;
+        Button AddRow, About, Clear, AddColumn, RemoveRow, RemoveColumn, Save, Open;
         public Form1()
         {
             Text = "Table";
@@ -110,6 +110,7 @@ namespace Lab2OOP
                     Table.Recalculate(Table.CurCell);
                 }
                 TableChanged = true;
+                Text = "*Table";
             };
             AddTableButtons();
             AddFileButtons();
@@ -178,6 +179,7 @@ namespace Lab2OOP
                     Table.Recalculate(changed);
                 }
                 TableChanged = true;
+                Text = "*Table";
             };
             Controls.Add(Table);
             Table.ResumeLayout();
@@ -188,7 +190,7 @@ namespace Lab2OOP
             {
                 Location = new Point(
                     RemoveColumn.Right + Math.Max(20, 
-                        (ClientRectangle.Right - 1040 - ExpressionInCell.Right) / 2)
+                        (ClientRectangle.Right - 900 - ExpressionInCell.Right) / 2 - 30)
                     , 10),
                 Size = new Size(80, 30),
                 Text = "About",
@@ -216,6 +218,7 @@ namespace Lab2OOP
                     File.WriteAllText(saveTo.FileName, Table.ToFile());
                 }
                 TableChanged = false;
+                Text = "Table";
             };
             Open = new Button()
             {
@@ -252,9 +255,21 @@ namespace Lab2OOP
                     }
                 }
             };
+            Clear = new Button()
+            {
+                Location = new Point(Open.Right + 15, About.Top),
+                Size = new Size(70, 30),
+                Text = "Clear",
+                Font = new Font("Arial", 14),
+            };
+            Clear.Click += (s, e) =>
+            {
+                Table.Clear();
+            };
             MenuPanel.Controls.Add(About);
             MenuPanel.Controls.Add(Save);
             MenuPanel.Controls.Add(Open);
+            MenuPanel.Controls.Add(Clear);
         }
         void AddTableButtons()
         {
@@ -262,7 +277,7 @@ namespace Lab2OOP
             {
                 Location = new Point(
                     ExpressionInCell.Right + Math.Max(20, 
-                        (ClientRectangle.Right - 1040 - ExpressionInCell.Right) / 2)
+                        (ClientRectangle.Right - 900 - ExpressionInCell.Right) / 2)
                     , 15),
                 Text = "Rows:",
                 Font = new Font("Arial", 14),
@@ -272,14 +287,14 @@ namespace Lab2OOP
             {
                 Text = "Add",
                 Location = new Point(Rows.Right, 10),
-                Size = new Size(80, 30),
+                Size = new Size(50, 30),
             };
             AddRow.Click += (s, e) => Table.AddRows(1);
             RemoveRow = new Button()
             {
                 Text = "Remove",
                 Location = new Point(AddRow.Right + 10, 10),
-                Size = new Size(100, 30),
+                Size = new Size(60, 30),
             };
             RemoveRow.Click += (s, e) =>
             {
@@ -312,14 +327,14 @@ namespace Lab2OOP
             {
                 Text = "Add",
                 Location = new Point(Cols.Right, 10),
-                Size = new Size(80, 30),
+                Size = new Size(50, 30),
             };
             AddColumn.Click += (s, e) => Table.AddColumns(1);
             RemoveColumn = new Button()
             {
                 Text = "Remove",
                 Location = new Point(AddColumn.Right + 10, 10),
-                Size = new Size(100, 30),
+                Size = new Size(60, 30),
             };
             RemoveColumn.Click += (s, e) =>
             {
@@ -352,7 +367,7 @@ namespace Lab2OOP
             MenuPanel.Width = ClientSize.Width - 120;
 
             Rows.Left = ExpressionInCell.Right + Math.Max(20,
-                        (ClientRectangle.Right - 1040 - ExpressionInCell.Right) / 2);
+                        (ClientRectangle.Right - 900 - ExpressionInCell.Right) / 2);
             AddRow.Left = Rows.Right;
             RemoveRow.Left = AddRow.Right + 10;
             Cols.Left = RemoveRow.Right + 40;
@@ -360,9 +375,10 @@ namespace Lab2OOP
             RemoveColumn.Left = AddColumn.Right + 10;
             
             About.Left = RemoveColumn.Right + Math.Max(20, 
-                (ClientRectangle.Right - 1040 - ExpressionInCell.Right) / 2);
+                (ClientRectangle.Right - 900 - ExpressionInCell.Right) / 2 - 30);
             Save.Left = About.Right + 15;
             Open.Left = Save.Right + 15;
+            Clear.Left = Open.Right + 15;
 
             Table.Size = new Size(ClientSize.Width - 80,
                     ClientSize.Height - MenuPanel.Bottom - 80);

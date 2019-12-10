@@ -42,6 +42,16 @@ namespace Lab2OOP
         {
             return Rows[rNum].Cells[cNum] as CellView;
         }
+        public void Clear()
+        {
+            foreach (DataGridViewRow r in Rows)
+            {
+                foreach (CellView c in r.Cells)
+                {
+                    c.Value = c.Expression = "";
+                }
+            }
+        }
         public void AddRows(int count)
         {
             for (int i = 0; i < count; i++)
@@ -222,6 +232,7 @@ namespace Lab2OOP
                     for (int j = 0; j < m; j++)
                     {
                         table.Cell(i, j).Expression = reader.ReadLine();
+
                         Console.WriteLine($"in cell ({i},{j}) now {table.Cell(i, j).Expression}");
                     }
                 }

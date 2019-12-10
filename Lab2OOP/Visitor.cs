@@ -79,7 +79,7 @@ namespace Lab2OOP
                 {
                     ans = l / r;
                 }
-                Console.WriteLine($"div {ans}");
+                Console.WriteLine($"div(/) {ans}");
             }
             else if (context.operation.Type == GrammarLexer.MULTIPLICATION_SIGN)
             {
@@ -176,7 +176,45 @@ namespace Lab2OOP
         {
             throw new Exception();
         }
- 
+        public override int VisitOnDiv([NotNull] GrammarParser.OnDivContext context)
+        {
+            int l = Left(context), r = Right(context);
+            int ans = 0;
+
+            if (r == 0)
+            {
+                var ex = new Exception();
+                ex.Data.Add("Type", "div on null");
+                throw ex;
+            }
+            else
+            {
+                ans = l / r;
+            }
+            Console.WriteLine($"div {ans}");
+            return ans;
+        }
+        public override int VisitMaxOf([NotNull] GrammarParser.MaxOfContext context)
+        {
+            int ans = int.MinValue;
+            foreach (var operand in context.expression())
+            {
+                ans = Math.Max(Visit(operand), ans);
+            }
+            Console.WriteLine($"max {ans}");
+            return ans;
+        }
+        public override int VisitMinOf([NotNull] GrammarParser.MinOfContext context)
+        {
+            int ans = int.MaxValue;
+            foreach (var operand in context.expression())
+            {
+                ans = Math.Min(Visit(operand), ans);
+            }
+            Console.WriteLine($"min {ans}");
+            return ans;
+        }
+        
         int Left(GrammarParser.ExpressionContext context)
         {
             return Visit(context.GetRuleContext<GrammarParser.ExpressionContext>(0));

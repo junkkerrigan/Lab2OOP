@@ -38,6 +38,13 @@ public interface IGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitRule([NotNull] GrammarParser.RuleContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>MaxOf</c>
+	/// labeled alternative in <see cref="GrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMaxOf([NotNull] GrammarParser.MaxOfContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>NegativeNumber</c>
 	/// labeled alternative in <see cref="GrammarParser.expression"/>.
 	/// </summary>
@@ -66,6 +73,13 @@ public interface IGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitAdditionSubtraction([NotNull] GrammarParser.AdditionSubtractionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>MinOf</c>
+	/// labeled alternative in <see cref="GrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMinOf([NotNull] GrammarParser.MinOfContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>InPower</c>
 	/// labeled alternative in <see cref="GrammarParser.expression"/>.
 	/// </summary>
@@ -93,6 +107,13 @@ public interface IGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitCell([NotNull] GrammarParser.CellContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>OnDiv</c>
+	/// labeled alternative in <see cref="GrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitOnDiv([NotNull] GrammarParser.OnDivContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>OnModulo</c>
 	/// labeled alternative in <see cref="GrammarParser.expression"/>.

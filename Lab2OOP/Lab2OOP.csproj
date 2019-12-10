@@ -49,12 +49,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Antlr.cs" />
-    <Compile Include="CellView.cs" />
+    <Compile Include="GrammarBaseListener.cs" />
     <Compile Include="GrammarBaseVisitor.cs" />
     <Compile Include="GrammarLexer.cs" />
+    <Compile Include="GrammarListener.cs" />
     <Compile Include="GrammarParser.cs" />
     <Compile Include="GrammarVisitor.cs" />
+    <Compile Include="Visitor.cs" />
+    <Compile Include="CellView.cs" />
     <Compile Include="InputFrom.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Program.cs" />
