@@ -8,51 +8,21 @@ using Antlr4.Runtime;
 
 namespace Lab2OOP
 {
-    public class ParsingErrorListener : IAntlrErrorListener<IToken>
+    public class ElectronicTable : DataGridView
     {
-        public void SyntaxError(TextWriter output, IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
+        public ElectronicTableCell Cell(int rNum, int cNum)
         {
-            Console.WriteLine("SE");
-            throw new Exception();
+            return Rows[rNum].Cells[cNum] as ElectronicTableCell;
         }
-    }
-
-    public class TableView : DataGridView
-    {
-        public TableView(int rows, int cols) : base()
-        {
-            AllowUserToAddRows = false;
-            MultiSelect = false;
-            AddColumns(cols);
-            AddRows(rows);
-            RowHeadersWidth = 60;
-            DefaultCellStyle.Font = new Font("Arial", 16);
-            ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            RowHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-        }
-        public CellView CurCell
+        public ElectronicTableCell CurCell
         {
             get
             {
                 if (SelectedCells.Count == 0) return null;
-                return SelectedCells[0] as CellView;
+                return SelectedCells[0] as ElectronicTableCell;
             }
         }
-        public CellView Cell(int rNum, int cNum)
-        {
-            return Rows[rNum].Cells[cNum] as CellView;
-        }
-        public void Clear()
-        {
-            foreach (DataGridViewRow r in Rows)
-            {
-                foreach (CellView c in r.Cells)
-                {
-                    c.Value = c.Expression = "";
-                }
-            }
-        }
-        public void AddRows(int count)
+        public void AddRow(int count)
         {
             for (int i = 0; i < count; i++)
             {
@@ -61,12 +31,23 @@ namespace Lab2OOP
                 Rows.Add(row);
             }
         }
-        public void AddColumns(int cnt)
+        public ElectronicTable(int rows, int cols) : base()
+        {
+            AllowUserToAddRows = false;
+            MultiSelect = false;
+            AddColumn(cols);
+            AddRow(rows);
+            RowHeadersWidth = 60;
+            DefaultCellStyle.Font = new Font("Arial", 16);
+            ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            RowHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+        }
+        public void AddColumn(int cnt)
         {
             for (int i = 0; i < cnt; i++)
             {
-                DataGridViewColumn col = new DataGridViewColumn(new CellView());
-                col.HeaderCell.Value = Sys26.NumToSys26(ColumnCount + 1);
+                DataGridViewColumn col = new DataGridViewColumn(new ElectronicTableCell());
+                col.HeaderCell.Value = ColumnSys26.NumToSys26(ColumnCount + 1);
                 Columns.Add(col);
             }
         }
@@ -77,7 +58,7 @@ namespace Lab2OOP
             for (int i = 0; i < ColumnCount; i++)
             {
                 var cell = Cell(idx, i);
-                foreach (var d in cell.Connected)
+                foreach (var d in cell.Depended)
                 {
                     if (d.RowIndex == idx) continue;
                     canDelete = false;
@@ -86,12 +67,11 @@ namespace Lab2OOP
             }
             if (canDelete)
             {
-                RestoreRowTitles(idx);
+                ChangeRowTitles(idx);
                 Rows.RemoveAt(idx);
                 return;
             }
-            var isDelete = MessageBox.Show("Removing row will lead to some cells" +
-                " to become empty. Remove row?", "Danger",
+            var isDelete = MessageBox.Show("If you delete this row, cells that refers to it will become empty. Are you still wanna delete it?", "Danger",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (isDelete == DialogResult.No) return;
             try
@@ -99,9 +79,9 @@ namespace Lab2OOP
                 for (int i = 0; i < Columns.Count; i++)
                 {
                     var cell = Cell(idx, i);
-                    EmptyConnections(cell);
+                    ClearDependecies(cell);
                 }
-                RestoreRowTitles(idx);
+                ChangeRowTitles(idx);
                 Rows.RemoveAt(idx);
             }
             catch (Exception ex)
@@ -109,12 +89,22 @@ namespace Lab2OOP
                 Console.WriteLine($"in DelRow: {ex.Message}");
             }
         }
-        public void DeleteColumn(string name)
+        public void Clear()
+        {
+            foreach (DataGridViewRow r in Rows)
+            {
+                foreach (ElectronicTableCell c in r.Cells)
+                {
+                    c.Value = c.Expression = "";
+                }
+            }
+        }
+        public void DeleteColumn(string num)
         {
             int idx;
             try
             {
-                idx = int.Parse(name);
+                idx = int.Parse(num);
             }
             catch
             {
@@ -126,7 +116,7 @@ namespace Lab2OOP
             for (int i = 0; i < RowCount; i++)
             {
                 var cell = Cell(i, idx);
-                foreach (var d in cell.Connected)
+                foreach (var d in cell.Depended)
                 {
                     if (d.ColumnIndex == idx) continue;
                     canDelete = false;
@@ -135,12 +125,11 @@ namespace Lab2OOP
             }
             if (canDelete)
             {
-                RestoreColTitles(idx);
+                ChangeColTitles(idx);
                 Columns.RemoveAt(idx);
                 return;
             }
-            var isDelete = MessageBox.Show("Removing column will lead to some cells" +
-                " to become empty. Remove column?", "Danger",
+            var isDelete = MessageBox.Show("If you delete this column, cells that refers to it will become empty. Are you still wanna delete it?", "Danger",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (isDelete == DialogResult.No) return;
             try
@@ -148,9 +137,9 @@ namespace Lab2OOP
                 for (int i = 0; i < RowCount; i++)
                 {
                     var cell = Cell(i, idx);
-                    EmptyConnections(cell);
+                    ClearDependecies(cell);
                 }
-                RestoreColTitles(idx);
+                ChangeColTitles(idx);
                 Columns.RemoveAt(idx);
             }
             catch (Exception ex)
@@ -158,21 +147,21 @@ namespace Lab2OOP
                 Console.WriteLine($"in DelCol: {ex.Message}");
             }
         }
-        void RestoreRowTitles(int deleted)
+        void ChangeRowTitles(int deleted)
         {
             for (int i = RowCount - 1; i > deleted; i--)
             {
                 Rows[i].HeaderCell.Value = Rows[i - 1].HeaderCell.Value;
             }
         }
-        void RestoreColTitles(int deleted)
+        void ChangeColTitles(int deleted)
         {
             for (int i = ColumnCount - 1; i > deleted; i--)
             {
                 Columns[i].HeaderCell.Value = Columns[i - 1].HeaderCell.Value;
             }
         }
-        void ProcessCell(CellView cell)
+        void CalculateCellExpression(ElectronicTableCell cell)
         {
             try
             {
@@ -189,23 +178,23 @@ namespace Lab2OOP
             {
                 throw;
             }
-            cell.Recalculated = true;
-            foreach (var dep in cell.Connected)
+            cell.IsReevaluated = true;
+            foreach (var dep in cell.Depended)
             {
-                ProcessCell(dep);
+                CalculateCellExpression(dep);
             }
         }
-        void EmptyConnections(CellView cur)
+        void ClearDependecies(ElectronicTableCell cur)
         {
             cur.Value = cur.Expression = "";
-            foreach (var d in cur.Connected)
+            foreach (var d in cur.Depended)
             {
-                EmptyConnections(d);
+                ClearDependecies(d);
             }
-            cur.Connected.Clear();
-            cur.Connections.Clear();
+            cur.Depended.Clear();
+            cur.Dependecies.Clear();
         }
-        public string ToFile()
+        public string ConvertToText()
         {
             string data = $"{RowCount} {ColumnCount}\n";
             for (int i = 0; i < RowCount; i++)
@@ -217,7 +206,35 @@ namespace Lab2OOP
             }
             return data;
         }
-        public static TableView FillFromFile(string data)
+        public void CalculateAllCells(ElectronicTableCell updated)
+        {
+            foreach (DataGridViewRow r in Rows)
+            {
+                foreach (ElectronicTableCell c in r.Cells)
+                {
+                    c.IsReevaluated = false;
+                }
+            }
+            foreach (var d in updated.Dependecies)
+            {
+                d.Depended.Remove(updated);
+            }
+            updated.Dependecies.Clear();
+            if (string.IsNullOrWhiteSpace(updated.Expression))
+            {
+                ClearDependecies(updated);
+                return;
+            }
+            try
+            {
+                CalculateCellExpression(updated);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public static ElectronicTable FillFromText(string data)
         {
             try
             {
@@ -226,7 +243,7 @@ namespace Lab2OOP
                 var n = int.Parse(sizes.Substring(0, sizes.IndexOf(' ')));
                 var m = int.Parse(sizes.Substring(sizes.IndexOf(' ') + 1));
                 Console.WriteLine($"created table with sizes {n} and {m}");
-                TableView table = new TableView(n, m);
+                ElectronicTable table = new ElectronicTable(n, m);
                 for (int i = 0; i < n; i++)
                 {
                     for (int j = 0; j < m; j++)
@@ -240,39 +257,11 @@ namespace Lab2OOP
                 {
                     for (int j = 0; j < m; j++)
                     {
-                        table.Recalculate(table.Cell(i, j));
+                        table.CalculateAllCells(table.Cell(i, j));
                         Console.WriteLine($"value of ({i},{j}) now {table.Cell(i, j).Value}");
                     }
                 }
                 return table;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-        public void Recalculate(CellView updated)
-        {
-            foreach (DataGridViewRow r in Rows)
-            {
-                foreach (CellView c in r.Cells)
-                {
-                    c.Recalculated = false;
-                }
-            }
-            foreach (var d in updated.Connections)
-            {
-                d.Connected.Remove(updated);
-            }
-            updated.Connections.Clear();
-            if (string.IsNullOrWhiteSpace(updated.Expression))
-            {
-                EmptyConnections(updated);
-                return;
-            }
-            try
-            {
-                ProcessCell(updated);
             }
             catch
             {

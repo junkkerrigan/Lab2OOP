@@ -6,23 +6,23 @@ using Antlr4.Runtime;
 
 namespace Lab2OOP
 {
-    public class CellView : DataGridViewTextBoxCell
+    public class ElectronicTableCell : DataGridViewTextBoxCell
     {
-        public CellView() : base()
-        {
-        }
-        public TableView Table { 
+        public ElectronicTable Table { 
             get
             {
-                return DataGridView as TableView;
+                return DataGridView as ElectronicTable;
             }
         }
-        public bool Visited { get; set; } = false;
+        public ElectronicTableCell() : base()
+        {
+        }
         public string Expression { get; set; } = "";
-        public bool Recalculated { get; set; } = false;
-        public HashSet<CellView> Connections { get; set; } = new HashSet<CellView>();
-        public HashSet<CellView> Connected { get; set; } = new HashSet<CellView>();
-        public int Evaluate()
+        public bool CurrentlyCalculating { get; set; } = false;
+        public bool IsReevaluated { get; set; } = false;
+        public HashSet<ElectronicTableCell> Dependecies { get; set; } = new HashSet<ElectronicTableCell>();
+        public HashSet<ElectronicTableCell> Depended { get; set; } = new HashSet<ElectronicTableCell>();
+        public int Count()
         {
             if (Expression == "")
             {
@@ -30,7 +30,7 @@ namespace Lab2OOP
                 ex.Data.Add("Type", "reference to empty cell");
                 throw ex;
             }
-            if (Recalculated)
+            if (IsReevaluated)
             {
                 return (int)Value;
             }
@@ -44,7 +44,7 @@ namespace Lab2OOP
                 parser.AddErrorListener(new ParsingErrorListener());
                 var expr = parser.rule();
                 int val = (new ParsingVisitor(this)).Visit(expr);
-                Recalculated = true;
+                IsReevaluated = true;
                 return val;
             }
             catch
@@ -54,9 +54,10 @@ namespace Lab2OOP
         }
         public override object Clone()
         {
-            var clone = base.Clone() as CellView;
+            var clone = base.Clone() as ElectronicTableCell;
             clone.Expression = Expression;
             return clone;
         }
     }
+
 }
