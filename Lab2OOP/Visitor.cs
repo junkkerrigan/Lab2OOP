@@ -136,6 +136,7 @@ namespace Lab2OOP
                 ElectronicTableCell cell = CalculatingCell.Table.Cell(rowNum, colNum);
                 if (cell.CurrentlyCalculating)
                 {
+
                     var ex = new Exception();
                     ex.Data.Add("Type", "cell loop");
                     throw ex;
@@ -145,7 +146,7 @@ namespace Lab2OOP
                 cell.CurrentlyCalculating = true;
                 int ans = cell.Count();
                 cell.CurrentlyCalculating = false;
-                Console.WriteLine($"{cellRef} {ans}");
+                Console.WriteLine($"Value of {cellRef} is {ans}");
                 return ans;
             }
             catch
@@ -157,7 +158,7 @@ namespace Lab2OOP
         {
             var l = Left(context);
             var r = Right(context);
-            int ans = 0;
+            int ans;
             if (r < 0)
             {
                 var ex = new ArgumentOutOfRangeException();

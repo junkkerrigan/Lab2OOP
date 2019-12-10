@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -213,6 +214,7 @@ namespace Lab2OOP
                 foreach (ElectronicTableCell c in r.Cells)
                 {
                     c.IsReevaluated = false;
+                    c.CurrentlyCalculating = false;
                 }
             }
             foreach (var d in updated.Dependecies)
@@ -229,9 +231,9 @@ namespace Lab2OOP
             {
                 CalculateCellExpression(updated);
             }
-            catch
+            catch 
             {
-                throw;
+                throw; // fix cell loop handling
             }
         }
         public static ElectronicTable FillFromText(string data)

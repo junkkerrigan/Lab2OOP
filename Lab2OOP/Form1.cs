@@ -118,7 +118,7 @@ namespace Lab2OOP
                     {
                         MessageBox.Show($"Wrong expression: {ex.Data["Type"]}", "Error");
 
-                    }
+                    }   
                     else
                     {
                         MessageBox.Show($"Wrong expression", "Error");
