@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using Antlr4.Runtime;
 
-namespace Lab2
+namespace Lab2OOP
 {
     public class CellView : DataGridViewTextBoxCell
     {

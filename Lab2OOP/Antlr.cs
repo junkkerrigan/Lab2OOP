@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Antlr4.Runtime.Misc;
 
-namespace Lab2
+namespace Lab2OOP
 {
     public class AntlrVisitor : Lab2GrammarBaseVisitor<int>
     {
@@ -19,25 +19,25 @@ namespace Lab2
         public AntlrVisitor(CellView calculating) : base()
         {
             CalculatingCell = calculating;
-            console.log($"CalculatingCell: {calculating}");
-            console.log("Dependecies:");
+            Console.WriteLine($"CalculatingCell: {calculating}");
+            Console.WriteLine("Dependecies:");
             foreach (var d in calculating.Connections)
             {
-                console.log(d);
+                Console.WriteLine(d);
             }
-            console.log("Connected:");
+            Console.WriteLine("Connected:");
             foreach (var d in calculating.Connected)
             {
-                console.log(d);
+                Console.WriteLine(d);
             }
         }
         public override int VisitUnit(Lab2GrammarParser.UnitContext context)
         {
             try
             {
-                console.log(context.GetText());
+                Console.WriteLine(context.GetText());
                 int ans = Visit(context.expr());
-                console.log($"{ans}");
+                Console.WriteLine($"{ans}");
                 return ans;
             }
             catch
@@ -48,7 +48,7 @@ namespace Lab2
         public override int VisitNum([NotNull] Lab2GrammarParser.NumContext context)
         {
             int ans = int.Parse(context.GetText());
-            console.log($"num {ans}");
+            Console.WriteLine($"num {ans}");
             return ans;
         }
         public override int VisitAdditionOrSubtraction(Lab2GrammarParser.AdditionOrSubtractionContext context)
@@ -58,12 +58,12 @@ namespace Lab2
             if (context.operatorToken.Type == Lab2GrammarLexer.ADDITION)
             {
                 ans = l + r;
-                console.log($"plus {ans}");
+                Console.WriteLine($"plus {ans}");
             }
             else if (context.operatorToken.Type == Lab2GrammarLexer.SUBTRACTION)
             {
                 ans = l - r;
-                console.log($"minus {ans}");
+                Console.WriteLine($"minus {ans}");
             }
             return ans;
         }
@@ -74,7 +74,7 @@ namespace Lab2
             if (context.operatorToken.Type == Lab2GrammarLexer.MULTIPLICATION)
             {
                 ans = l * r;
-                console.log($"mult {ans}");
+                Console.WriteLine($"mult {ans}");
             }
             else if (context.operatorToken.Type == Lab2GrammarLexer.DIV)
             {
@@ -85,7 +85,7 @@ namespace Lab2
                     throw ex;
                 }
                 ans = l / r;
-                console.log($"div {ans}");
+                Console.WriteLine($"div {ans}");
             }
             return ans;
         }
@@ -100,7 +100,7 @@ namespace Lab2
                 throw ex;
             }
             int ans = l % r;
-            console.log($"mod {ans}");
+            Console.WriteLine($"mod {ans}");
             return ans;
         }
         public override int VisitPower([NotNull] Lab2GrammarParser.PowerContext context)
@@ -120,19 +120,19 @@ namespace Lab2
                 throw ex;
             }
             int ans = (int)Math.Pow(l, r);
-            console.log($"pow {ans}");
+            Console.WriteLine($"pow {ans}");
             return ans;
         }
         public override int VisitBrackets([NotNull] Lab2GrammarParser.BracketsContext context)
         {
             int ans = Visit(context.expr());
-            console.log($"par {ans}");
+            Console.WriteLine($"par {ans}");
             return ans;
         }
         public override int VisitNegNum([NotNull] Lab2GrammarParser.NegNumContext context)
         {
             int ans = int.Parse(context.GetText());
-            console.log($"neg {ans}");
+            Console.WriteLine($"neg {ans}");
             return ans;
         }
         public override int VisitCellRef([NotNull] Lab2GrammarParser.CellRefContext context)
@@ -157,7 +157,7 @@ namespace Lab2
                 cell.Visited = true;
                 int ans = cell.Evaluate();
                 cell.Visited = false;
-                console.log($"{cellRef} {ans}");
+                Console.WriteLine($"{cellRef} {ans}");
                 return ans;
             }
             catch
@@ -172,13 +172,13 @@ namespace Lab2
         public override int VisitInc([NotNull] Lab2GrammarParser.IncContext context)
         {
             int ans = Visit(context.expr()) + 1;
-            console.log($"inc {ans}");
+            Console.WriteLine($"inc {ans}");
             return ans;
         }
         public override int VisitDec([NotNull] Lab2GrammarParser.DecContext context)
         {
             int ans = Visit(context.expr()) - 1;
-            console.log($"dic {ans}");
+            Console.WriteLine($"dic {ans}");
             return ans;
         }
     }

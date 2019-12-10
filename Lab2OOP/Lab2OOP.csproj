@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Antlr.cs" />
     <Compile Include="CellView.cs" />
+    <Compile Include="InputFrom.cs" />
     <Compile Include="Lab2GrammarBaseListener.cs" />
     <Compile Include="Lab2GrammarBaseVisitor.cs" />
     <Compile Include="Lab2GrammarLexer.cs" />

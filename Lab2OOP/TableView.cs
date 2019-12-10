@@ -6,13 +6,13 @@ using System.Text;
 using System.Windows.Forms;
 using Antlr4.Runtime;
 
-namespace Lab2
+namespace Lab2OOP
 {
     public class MyParsErrListener : IAntlrErrorListener<IToken>
     {
         public void SyntaxError(TextWriter output, IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
         {
-            console.log("SE");
+            Console.WriteLine("SE");
             throw new Exception();
         }
     }
@@ -26,7 +26,7 @@ namespace Lab2
             AddColumns(cols);
             AddRows(rows);
             RowHeadersWidth = 60;
-            DefaultCellStyle.Font = new Font("Times New Roman", 12);
+            DefaultCellStyle.Font = new Font("Arial", 16);
             ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             RowHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
@@ -96,7 +96,7 @@ namespace Lab2
             }
             catch (Exception ex)
             {
-                console.log($"in DelRow: {ex.Message}");
+                Console.WriteLine($"in DelRow: {ex.Message}");
             }
         }
         public void DeleteColumn(string name)
@@ -145,7 +145,7 @@ namespace Lab2
             }
             catch (Exception ex)
             {
-                console.log($"in DelCol: {ex.Message}");
+                Console.WriteLine($"in DelCol: {ex.Message}");
             }
         }
         void RestoreRowTitles(int deleted)
@@ -215,14 +215,14 @@ namespace Lab2
                 var sizes = reader.ReadLine();
                 var n = int.Parse(sizes.Substring(0, sizes.IndexOf(' ')));
                 var m = int.Parse(sizes.Substring(sizes.IndexOf(' ') + 1));
-                console.log($"created table with sizes {n} and {m}");
+                Console.WriteLine($"created table with sizes {n} and {m}");
                 TableView table = new TableView(n, m);
                 for (int i = 0; i < n; i++)
                 {
                     for (int j = 0; j < m; j++)
                     {
                         table.Cell(i, j).Expression = reader.ReadLine();
-                        console.log($"in cell ({i},{j}) now {table.Cell(i, j).Expression}");
+                        Console.WriteLine($"in cell ({i},{j}) now {table.Cell(i, j).Expression}");
                     }
                 }
                 for (int i = 0; i < n; i++)
@@ -230,7 +230,7 @@ namespace Lab2
                     for (int j = 0; j < m; j++)
                     {
                         table.Recalculate(table.Cell(i, j));
-                        console.log($"value of ({i},{j}) now {table.Cell(i, j).Value}");
+                        Console.WriteLine($"value of ({i},{j}) now {table.Cell(i, j).Value}");
                     }
                 }
                 return table;

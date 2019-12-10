@@ -13,64 +13,12 @@ using System.Windows.Forms;
 using Antlr4;
 using Antlr4.Runtime;
 
-namespace Lab2
+namespace Lab2OOP
 {
-    public static class console
-    {
-        public static void log(object obj)
-        {
-            Debug.WriteLine(obj);
-        }
-    }
     // mod div
     // inc dec
     // power
     // java -jar antlr-4.7.2-complete.jar -Dlanguage=CSharp.\Lab2Grammar.g4 -visitor 
-    public static class Dialog
-    {
-        public static string Show(string text, string caption)
-        {
-            Form prompt = new Form()
-            {
-                Width = 600,
-                Height = 400,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                Text = caption,
-                StartPosition = FormStartPosition.CenterScreen
-            };
-            Label textLabel = new Label()
-            {
-                Left = 70,
-                Top = 90,
-                Text = text,
-                Width = 400
-            };
-            RichTextBox textBox = new RichTextBox()
-            {
-                Left = 70,
-                Top = textLabel.Bottom + 30,
-                Width = 400,
-                Height = 40,
-                Font = new Font("Arial", 18),
-            };
-            Button confirmation = new Button()
-            {
-                Text = "Submit",
-                Left = textBox.Right - 110,
-                Width = 90,
-                Height = 40,
-                Top = textBox.Bottom + 30,
-                DialogResult = DialogResult.OK
-            };
-            confirmation.Click += (sender, e) => { prompt.Close(); };
-            prompt.Controls.Add(textBox);
-            prompt.Controls.Add(confirmation);
-            prompt.Controls.Add(textLabel);
-            prompt.AcceptButton = confirmation;
-
-            return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : "";
-        }
-    }
 
     public static class Sys26
     {
@@ -107,6 +55,8 @@ namespace Lab2
             return num;
         }
     }
+
+    
 
     public partial class Form1 : Form
     {
@@ -150,11 +100,11 @@ namespace Lab2
                 {
                     if (ex.Data.Contains("Type"))
                     {
-                        MessageBox.Show($"Bad expression: {ex.Data["Type"]}", "Error");
+                        MessageBox.Show($"Wrong expression: {ex.Data["Type"]}", "Error");
                     }
                     else
                     {
-                        MessageBox.Show($"Bad expression", "Error");
+                        MessageBox.Show($"Wrong expression", "Error");
                     }
                     Table.CurCell.Expression = oldExpr;
                     Table.Recalculate(Table.CurCell);
@@ -170,7 +120,7 @@ namespace Lab2
         {
             if (table == null)
             {
-                Table = new TableView(30, 20)
+                Table = new TableView(20, 10)
                 {
                     Location = new Point(40, MenuPanel.Bottom + 20),
                     Size = new Size(ClientSize.Width - 80,
@@ -216,12 +166,12 @@ namespace Lab2
                 {
                     if (ex.Data.Contains("Type"))
                     {
-                        MessageBox.Show($"Bad expression: {ex.Data["Type"]}", "Error");
+                        MessageBox.Show($"Wrong expression: {ex.Data["Type"]}", "Error");
 
                     }
                     else
                     {
-                        MessageBox.Show($"Bad expression", "Error");
+                        MessageBox.Show($"Wrong expression", "Error");
 
                     }
                     changed.Expression = oldExpr;
@@ -242,18 +192,18 @@ namespace Lab2
                     , 10),
                 Size = new Size(80, 30),
                 Text = "About",
-                Font = new Font("Times New Roman", 12),
+                Font = new Font("Arial", 14),
             };
             About.Click += (s, e) =>
             {
-                MessageBox.Show("Волотовський Єфім, К-25. \nВаріант №5, реалізовані операції: ділення націло, взяття по модулю, inc, dec, піднесення до степеня");
+                MessageBox.Show("Сивокобильска Іра, К-25. \nВаріант №5, реалізовані операції: ділення націло, взяття по модулю, inc, dec, піднесення до степеня");
             };
             Save = new Button()
             {
                 Location = new Point(About.Right + 15, About.Top),
                 Size = new Size(80, 30),
                 Text = "Save",
-                Font = new Font("Times New Roman", 12),
+                Font = new Font("Arial", 14),
             };
             Save.Click += (s, e) =>
             {
@@ -272,13 +222,13 @@ namespace Lab2
                 Location = new Point(Save.Right + 15, About.Top),
                 Size = new Size(80, 30),
                 Text = "Open",
-                Font = new Font("Times New Roman", 12),
+                Font = new Font("Arial", 14),
             };
             Open.Click += (s, e) =>
             {
                 if (ChangesMade)
                 {
-                    var isSave = MessageBox.Show("Save changes?", "", MessageBoxButtons.YesNoCancel);
+                    var isSave = MessageBox.Show("Save the table?", "Saving", MessageBoxButtons.YesNoCancel);
                     if (isSave == DialogResult.Yes)
                     {
                         Save.PerformClick();
@@ -298,11 +248,11 @@ namespace Lab2
                     }
                     catch
                     {
-                        MessageBox.Show($"Bad file: {openFrom.FileName}", "Error");
+                        MessageBox.Show($"Wrong file: {openFrom.FileName}", "Wrong file");
                     }
                 }
             };
-            console.log(Open.Right - About.Left);
+            Console.WriteLine(Open.Right - About.Left);
             MenuPanel.Controls.Add(About);
             MenuPanel.Controls.Add(Save);
             MenuPanel.Controls.Add(Open);
@@ -316,7 +266,7 @@ namespace Lab2
                         (ClientRectangle.Right - 1040 - ExpressionInCell.Right) / 2)
                     , 15),
                 Text = "Rows:",
-                Font = new Font("Times New Roman", 12),
+                Font = new Font("Arial", 14),
                 Size = new Size(70, 30),
             };
             AddRow = new Button()
@@ -334,7 +284,7 @@ namespace Lab2
             };
             RemoveRow.Click += (s, e) =>
             {
-                string input = Dialog.Show("Which row delete?", "");
+                string input = InputForm.Show("Select which row to remove:", "Removing");
                 if (input == "") return;
                 try
                 {
@@ -343,12 +293,12 @@ namespace Lab2
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    MessageBox.Show("Bad number of row", "Error",
+                    MessageBox.Show("Wrong number", "Wrong number",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch
                 {
-                    MessageBox.Show("Bad input", "Error",
+                    MessageBox.Show("Wrong input", "Wrong input",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             };
@@ -356,7 +306,7 @@ namespace Lab2
             {
                 Location = new Point(RemoveRow.Right + 40, 15),
                 Text = "Columns:",
-                Font = new Font("Times New Roman", 12),
+                Font = new Font("Arial", 14),
                 Size = new Size(100, 30),
             };
             AddColumn = new Button()
@@ -374,7 +324,7 @@ namespace Lab2
             };
             RemoveColumn.Click += (s, e) =>
             {
-                string input = Dialog.Show("Which column delete?", "");
+                string input = InputForm.Show("Select which column to remove:", "Removing");
                 if (input == "") return;
                 try
                 {
@@ -382,16 +332,16 @@ namespace Lab2
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    MessageBox.Show("Bad name of column", "Error",
+                    MessageBox.Show("Wrong number of column", "Wrong number",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch
                 {
-                    MessageBox.Show("Bad input", "Error",
+                    MessageBox.Show("Wrong input", "Wrong input",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             };
-            console.log(RemoveColumn.Right - Rows.Left);
+            Console.WriteLine(RemoveColumn.Right - Rows.Left);
             MenuPanel.Controls.Add(Rows);
             MenuPanel.Controls.Add(AddRow);
             MenuPanel.Controls.Add(RemoveRow);
@@ -422,7 +372,7 @@ namespace Lab2
         void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (ChangesMade) return;
-            var isSave = MessageBox.Show("Save changes?", "", MessageBoxButtons.YesNoCancel);
+            var isSave = MessageBox.Show("Save the table?", "Saving", MessageBoxButtons.YesNoCancel);
             if (isSave == DialogResult.Yes)
             {
                 Save.PerformClick();
