@@ -1,3 +1,3 @@
 # Excel Remastered
 ## Lab #2 on OOP
-Author: Ira, K-25
+Author: Syvokobylskaya Ira, K-25
